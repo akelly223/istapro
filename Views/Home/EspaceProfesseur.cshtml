@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Espace Professeur";
+}
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1">Bienvenue, Professeur</h2>
+    <p class="text-secondary mb-0">Voici votre espace de travail.</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card card-stat h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="icon-badge"><i class="bi bi-journal-text"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">@ViewBag.NombreDevoirs</div>
+                    <div class="text-secondary">Devoirs assignés</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card card-stat h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="icon-badge"><i class="bi bi-inbox"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">@ViewBag.NombreRendusAujourdhui</div>
+                    <div class="text-secondary">Rendus reçus aujourd'hui</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <a asp-controller="Grades" asp-action="Index" class="text-decoration-none">
+            <div class="card card-stat h-100">
+                <div class="card-body">
+                    <div class="icon-badge mb-3"><i class="bi bi-clipboard-check-fill"></i></div>
+                    <h5 class="card-title text-dark">Notes</h5>
+                    <p class="card-text text-secondary mb-0">Attribuer et consulter les notes des étudiants.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <a asp-controller="Homeworks" asp-action="Index" class="text-decoration-none">
+            <div class="card card-stat h-100">
+                <div class="card-body">
+                    <div class="icon-badge mb-3"><i class="bi bi-journal-text"></i></div>
+                    <h5 class="card-title text-dark">Devoirs</h5>
+                    <p class="card-text text-secondary mb-0">Assigner des devoirs et consulter les rendus.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <a asp-controller="Attendances" asp-action="Index" class="text-decoration-none">
+            <div class="card card-stat h-100">
+                <div class="card-body">
+                    <div class="icon-badge mb-3"><i class="bi bi-calendar-check"></i></div>
+                    <h5 class="card-title text-dark">Présences</h5>
+                    <p class="card-text text-secondary mb-0">Faire l'appel et marquer présent/absent.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <a asp-controller="Students" asp-action="Index" class="text-decoration-none">
+            <div class="card card-stat h-100">
+                <div class="card-body">
+                    <div class="icon-badge mb-3"><i class="bi bi-people-fill"></i></div>
+                    <h5 class="card-title text-dark">Étudiants</h5>
+                    <p class="card-text text-secondary mb-0">Consultation en lecture seule.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <a asp-controller="ClassRooms" asp-action="Index" class="text-decoration-none">
+            <div class="card card-stat h-100">
+                <div class="card-body">
+                    <div class="icon-badge mb-3"><i class="bi bi-building"></i></div>
+                    <h5 class="card-title text-dark">Classes</h5>
+                    <p class="card-text text-secondary mb-0">Consultation en lecture seule.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <a asp-controller="Subjects" asp-action="Index" class="text-decoration-none">
+            <div class="card card-stat h-100">
+                <div class="card-body">
+                    <div class="icon-badge mb-3"><i class="bi bi-journal-bookmark-fill"></i></div>
+                    <h5 class="card-title text-dark">Matières</h5>
+                    <p class="card-text text-secondary mb-0">Consultation en lecture seule.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>

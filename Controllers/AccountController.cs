@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using GestionScolaire.Data;
 using GestionScolaire.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,12 @@ namespace GestionScolaire.Controllers
     {
         // SignInManager gère la connexion/déconnexion (vérifie le mot de passe, pose le cookie...).
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public AccountController(SignInManager<IdentityUser> signInManager)
+        public AccountController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         // Affiche le formulaire de connexion.
@@ -23,7 +26,7 @@ namespace GestionScolaire.Controllers
             return View(new LoginViewModel());
         }
 
-        // Traite le formulaire de connexion soumis par l'administrateur.
+        // Traite le formulaire de connexion, quel que soit le rôle du compte (Administrateur, Professeur, Etudiant).
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
@@ -46,6 +49,21 @@ namespace GestionScolaire.Controllers
                 {
                     return Redirect(returnUrl);
                 }
+
+                // Sans page précise demandée au départ, chaque rôle est envoyé vers son propre espace.
+                var utilisateur = await _userManager.FindByEmailAsync(model.Email);
+                if (utilisateur != null)
+                {
+                    if (await _userManager.IsInRoleAsync(utilisateur, AppRoles.Etudiant))
+                    {
+                        return RedirectToAction("MonEspace", "Home");
+                    }
+                    if (await _userManager.IsInRoleAsync(utilisateur, AppRoles.Professeur))
+                    {
+                        return RedirectToAction("EspaceProfesseur", "Home");
+                    }
+                }
+
                 return RedirectToAction("Dashboard", "Home");
             }
 
@@ -53,13 +71,20 @@ namespace GestionScolaire.Controllers
             return View(model);
         }
 
-        // Déconnecte l'administrateur : supprime le cookie d'authentification.
+        // Déconnecte l'utilisateur : supprime le cookie d'authentification.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        // Affichée quand un utilisateur connecté essaie d'accéder à une page réservée à un autre rôle.
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }
