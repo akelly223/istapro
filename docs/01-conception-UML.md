@@ -16,11 +16,13 @@
 
 ## 1. Diagramme de cas d'utilisation
 
-Un seul acteur : **Administrateur** (la seule personne qui utilise l'application, avec un compte protégé par ASP.NET Identity).
+**Mise à jour (extension rôles) :** l'application gère maintenant 3 acteurs distincts, avec des droits différents.
 
 ```mermaid
 graph LR
     Admin["🧑‍💼 Administrateur"]
+    Prof["👨‍🏫 Professeur"]
+    Etu["🧑‍🎓 Étudiant"]
 
     UC1(["Se connecter"])
     UC2(["Se déconnecter"])
@@ -31,6 +33,12 @@ graph LR
     UC7(["Gérer les matières"])
     UC8(["Attribuer les notes"])
     UC9(["Consulter les notes"])
+    UC10(["Consulter étudiants/classes/matières (lecture seule)"])
+    UC11(["Assigner un devoir"])
+    UC12(["Consulter les rendus"])
+    UC13(["Faire l'appel (présences)"])
+    UC14(["Consulter son profil et ses notes"])
+    UC15(["Envoyer un devoir"])
 
     Admin --> UC1
     Admin --> UC2
@@ -41,13 +49,34 @@ graph LR
     Admin --> UC7
     Admin --> UC8
     Admin --> UC9
+    Admin --> UC11
+    Admin --> UC13
+
+    Prof --> UC1
+    Prof --> UC2
+    Prof --> UC8
+    Prof --> UC9
+    Prof --> UC10
+    Prof --> UC11
+    Prof --> UC12
+    Prof --> UC13
+
+    Etu --> UC1
+    Etu --> UC2
+    Etu --> UC14
+    Etu --> UC15
 ```
 
-**Remarque pédagogique (à dire au professeur) :** tous les cas d'usage sauf « Se connecter » nécessitent implicitement d'être authentifié (relation `<<include>>` vers « Se connecter »). On ne le dessine pas pour ne pas surcharger le schéma, mais techniquement cela correspond à l'attribut `[Authorize]` posé sur les contrôleurs.
+**Remarques pédagogiques (à dire au professeur) :**
+- Tous les cas d'usage sauf « Se connecter » nécessitent implicitement d'être authentifié (relation `<<include>>` vers « Se connecter »). Techniquement, cela correspond à l'attribut `[Authorize]` (avec ou sans `Roles = "..."`) posé sur les contrôleurs.
+- Le Professeur a un accès **complet** aux notes/devoirs/présences, mais **lecture seule** sur étudiants/classes/matières (pas de UC3, UC4, UC5, UC6, UC7 pour lui).
+- L'Étudiant n'a accès qu'à **ses propres** données (son profil, ses notes, ses devoirs) — jamais à celles des autres étudiants.
 
 ---
 
 ## 2. Diagramme de classes
+
+**Mise à jour (extension rôles) :** `User` porte maintenant un rôle (Administrateur/Professeur/Etudiant) et `Student` est relié à son compte `User` via `UserId`. Deux nouvelles classes : `Homework` (devoir) et son association `HomeworkSubmission` (rendu), plus `Attendance` (présence).
 
 ```mermaid
 classDiagram
@@ -56,6 +85,7 @@ classDiagram
         +string UserName
         +string Email
         +string PasswordHash
+        +string Role
     }
 
     class ClassRoom {
@@ -71,6 +101,7 @@ classDiagram
         +DateTime DateNaissance
         +string Email
         +int ClassRoomId
+        +string UserId
     }
 
     class Subject {
@@ -87,14 +118,47 @@ classDiagram
         +DateTime DateEvaluation
     }
 
+    class Homework {
+        +int Id
+        +string Titre
+        +string Description
+        +int SubjectId
+        +int ClassRoomId
+        +DateTime DateLimite
+    }
+
+    class HomeworkSubmission {
+        +int Id
+        +int HomeworkId
+        +int StudentId
+        +DateTime DateEnvoi
+        +string NomFichier
+        +string NomFichierOriginal
+    }
+
+    class Attendance {
+        +int Id
+        +int StudentId
+        +DateTime DateSeance
+        +bool EstPresent
+    }
+
     ClassRoom "1" --> "0..*" Student : contient
     Student "1" --> "0..*" Grade : possède
     Subject "1" --> "0..*" Grade : concerne
+    Student "1" --> "0..1" User : se connecte avec
+    ClassRoom "1" --> "0..*" Homework : reçoit
+    Subject "1" --> "0..*" Homework : concerne
+    Homework "1" --> "0..*" HomeworkSubmission : reçoit
+    Student "1" --> "0..*" HomeworkSubmission : envoie
+    Student "1" --> "0..*" Attendance : concerne
 ```
 
 **Notes :**
-- `User` correspond au compte Identity (table `AspNetUsers`, gérée automatiquement par ASP.NET Identity). Il n'a pas de relation directe avec les autres classes : c'est juste le compte de connexion de l'administrateur.
+- `User` correspond au compte Identity (table `AspNetUsers`). Chaque compte a un **rôle** (Administrateur, Professeur ou Etudiant), géré par les tables Identity `AspNetRoles`/`AspNetUserRoles`.
+- `Student.UserId` est la clé qui relie la fiche étudiant (créée par l'administrateur) à son compte de connexion (créé automatiquement en même temps).
 - `Grade` est la classe association entre `Student` et `Subject` : chaque note relie un étudiant à une matière.
+- `HomeworkSubmission` est la classe association entre `Homework` et `Student` : chaque rendu relie un devoir à l'étudiant qui l'a envoyé.
 - Une classe (`ClassRoom`) contient plusieurs étudiants, mais un étudiant appartient à une seule classe.
 
 ---
@@ -158,6 +222,8 @@ sequenceDiagram
     Ctrl-->>Vue: Redirect vers /Grades (liste)
     Vue-->>Admin: Affiche la note enregistrée
 ```
+
+> **Note :** le MCD, le modèle relationnel et les diagrammes de séquence ci-dessous couvrent le cœur du projet (étapes 1 à 6). L'extension "espaces par rôle" (Professeur/Étudiant, Devoirs, Présences) est documentée en détail dans `docs/fiches/Kelly-Extension-Roles.md`, avec son propre diagramme de classes mis à jour en section 2.
 
 ---
 
