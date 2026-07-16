@@ -1,0 +1,87 @@
+@model IEnumerable<Student>
+@{
+    ViewData["Title"] = "Présences";
+    var presencesExistantes = ViewBag.PresencesExistantes as Dictionary<int, bool> ?? new Dictionary<int, bool>();
+    int? classRoomId = ViewBag.ClassRoomId as int?;
+}
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1">Présences</h2>
+    <p class="text-secondary mb-0">Choisis une classe et une date pour faire l'appel.</p>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i> @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label"><i class="bi bi-building"></i> Classe</label>
+                <select name="classRoomId" class="form-select" asp-items="ViewBag.Classes">
+                    <option value="">-- Choisir une classe --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label"><i class="bi bi-calendar3"></i> Date</label>
+                <input type="date" name="date" class="form-control" value="@ViewBag.Date" />
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Afficher la liste
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (classRoomId.HasValue)
+{
+    <div class="card">
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <p class="text-secondary mb-0">Aucun étudiant dans cette classe.</p>
+            }
+            else
+            {
+                <form asp-action="Enregistrer" method="post">
+                    <input type="hidden" name="classRoomId" value="@classRoomId" />
+                    <input type="hidden" name="date" value="@ViewBag.Date" />
+
+                    <div class="table-responsive">
+                        <table class="table table-modern align-middle mb-3">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3">Étudiant</th>
+                                    <th class="text-center">Présent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var etudiant in Model)
+                                {
+                                    bool presentParDefaut = !presencesExistantes.ContainsKey(etudiant.Id) || presencesExistantes[etudiant.Id];
+                                    <tr>
+                                        <td class="ps-3 fw-semibold">@etudiant.Nom @etudiant.Prenom</td>
+                                        <td class="text-center">
+                                            <input type="checkbox" name="presents" value="@etudiant.Id" class="form-check-input" checked="@presentParDefaut" style="width:1.3em;height:1.3em;" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Enregistrer les présences
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+}
