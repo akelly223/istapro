@@ -1,6 +1,7 @@
 @model IEnumerable<ClassRoom>
 @{
     ViewData["Title"] = "Classes";
+    bool estAdmin = User.IsInRole(AppRoles.Administrateur);
 }
 
 <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-4">
@@ -8,9 +9,12 @@
         <h2 class="fw-bold mb-1">Classes</h2>
         <p class="text-secondary mb-0">Liste des classes de l'établissement.</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-building-add"></i> Ajouter une classe
-    </a>
+    @if (estAdmin)
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-building-add"></i> Ajouter une classe
+        </a>
+    }
 </div>
 
 @if (TempData["Message"] != null)
@@ -55,12 +59,19 @@
                                     </span>
                                 </td>
                                 <td class="text-end pe-3">
-                                    <a asp-action="Edit" asp-route-id="@classe.Id" class="btn btn-sm btn-outline-secondary" title="Modifier">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@classe.Id" class="btn btn-sm btn-outline-danger" title="Supprimer">
-                                        <i class="bi bi-trash3"></i>
-                                    </a>
+                                    @if (estAdmin)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@classe.Id" class="btn btn-sm btn-outline-secondary" title="Modifier">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@classe.Id" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                            <i class="bi bi-trash3"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-secondary small">Lecture seule</span>
+                                    }
                                 </td>
                             </tr>
                         }

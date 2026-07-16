@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GestionScolaire.Controllers
 {
-    [Authorize]
+    // L'administrateur peut tout faire ; le professeur peut seulement consulter la liste.
+    [Authorize(Roles = AppRoles.Administrateur + "," + AppRoles.Professeur)]
     public class SubjectsController : Controller
     {
         private readonly AppDbContext _context;
@@ -29,6 +30,7 @@ namespace GestionScolaire.Controllers
         }
 
         // GET: /Subjects/Create
+        [Authorize(Roles = AppRoles.Administrateur)]
         public IActionResult Create()
         {
             return View();
@@ -36,6 +38,7 @@ namespace GestionScolaire.Controllers
 
         // POST: /Subjects/Create
         [HttpPost]
+        [Authorize(Roles = AppRoles.Administrateur)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Subject subject)
         {
@@ -52,6 +55,7 @@ namespace GestionScolaire.Controllers
         }
 
         // GET: /Subjects/Edit/5
+        [Authorize(Roles = AppRoles.Administrateur)]
         public async Task<IActionResult> Edit(int id)
         {
             var matiere = await _context.Subjects.FindAsync(id);
@@ -65,6 +69,7 @@ namespace GestionScolaire.Controllers
 
         // POST: /Subjects/Edit/5
         [HttpPost]
+        [Authorize(Roles = AppRoles.Administrateur)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Subject subject)
         {
@@ -87,6 +92,7 @@ namespace GestionScolaire.Controllers
 
         // GET: /Subjects/Delete/5
         // On indique combien de notes existantes seront supprimées par cascade avec la matière.
+        [Authorize(Roles = AppRoles.Administrateur)]
         public async Task<IActionResult> Delete(int id)
         {
             var matiere = await _context.Subjects.FirstOrDefaultAsync(m => m.Id == id);
@@ -101,6 +107,7 @@ namespace GestionScolaire.Controllers
 
         // POST: /Subjects/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = AppRoles.Administrateur)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

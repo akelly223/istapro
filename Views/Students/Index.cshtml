@@ -1,6 +1,7 @@
 @model IEnumerable<Student>
 @{
     ViewData["Title"] = "Étudiants";
+    bool estAdmin = User.IsInRole(AppRoles.Administrateur);
 }
 
 <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-4">
@@ -8,9 +9,12 @@
         <h2 class="fw-bold mb-1">Étudiants</h2>
         <p class="text-secondary mb-0">Liste de tous les étudiants inscrits.</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-person-plus-fill"></i> Ajouter un étudiant
-    </a>
+    @if (estAdmin)
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-person-plus-fill"></i> Ajouter un étudiant
+        </a>
+    }
 </div>
 
 @if (TempData["Message"] != null)
@@ -57,12 +61,19 @@
                                     <span class="badge rounded-pill text-bg-light border">@(etudiant.ClassRoom?.Nom ?? "—")</span>
                                 </td>
                                 <td class="text-end pe-3">
-                                    <a asp-action="Edit" asp-route-id="@etudiant.Id" class="btn btn-sm btn-outline-secondary" title="Modifier">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@etudiant.Id" class="btn btn-sm btn-outline-danger" title="Supprimer">
-                                        <i class="bi bi-trash3"></i>
-                                    </a>
+                                    @if (estAdmin)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@etudiant.Id" class="btn btn-sm btn-outline-secondary" title="Modifier">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@etudiant.Id" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                            <i class="bi bi-trash3"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-secondary small">Lecture seule</span>
+                                    }
                                 </td>
                             </tr>
                         }

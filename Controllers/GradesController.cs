@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GestionScolaire.Controllers
 {
-    [Authorize]
+    // L'administrateur et le professeur peuvent tous les deux gérer les notes.
+    // Les étudiants consultent les leurs uniquement depuis leur propre espace (Home/MonEspace).
+    [Authorize(Roles = AppRoles.Administrateur + "," + AppRoles.Professeur)]
     public class GradesController : Controller
     {
         private readonly AppDbContext _context;

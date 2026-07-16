@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GestionScolaire.Controllers
 {
-    [Authorize]
+    // L'administrateur peut tout faire ; le professeur peut seulement consulter la liste.
+    [Authorize(Roles = AppRoles.Administrateur + "," + AppRoles.Professeur)]
     public class ClassRoomsController : Controller
     {
         private readonly AppDbContext _context;
@@ -31,6 +32,7 @@ namespace GestionScolaire.Controllers
         }
 
         // GET: /ClassRooms/Create
+        [Authorize(Roles = AppRoles.Administrateur)]
         public IActionResult Create()
         {
             return View();
@@ -38,6 +40,7 @@ namespace GestionScolaire.Controllers
 
         // POST: /ClassRooms/Create
         [HttpPost]
+        [Authorize(Roles = AppRoles.Administrateur)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ClassRoom classRoom)
         {
@@ -54,6 +57,7 @@ namespace GestionScolaire.Controllers
         }
 
         // GET: /ClassRooms/Edit/5
+        [Authorize(Roles = AppRoles.Administrateur)]
         public async Task<IActionResult> Edit(int id)
         {
             var classe = await _context.ClassRooms.FindAsync(id);
@@ -67,6 +71,7 @@ namespace GestionScolaire.Controllers
 
         // POST: /ClassRooms/Edit/5
         [HttpPost]
+        [Authorize(Roles = AppRoles.Administrateur)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ClassRoom classRoom)
         {
@@ -90,6 +95,7 @@ namespace GestionScolaire.Controllers
         // GET: /ClassRooms/Delete/5
         // On affiche le nombre d'étudiants concernés, car la suppression de la classe
         // supprime aussi ses étudiants (et leurs notes) par cascade.
+        [Authorize(Roles = AppRoles.Administrateur)]
         public async Task<IActionResult> Delete(int id)
         {
             var classe = await _context.ClassRooms
@@ -106,6 +112,7 @@ namespace GestionScolaire.Controllers
 
         // POST: /ClassRooms/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = AppRoles.Administrateur)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
