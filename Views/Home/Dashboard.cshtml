@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Tableau de bord";
+}
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1">Bienvenue, Administrateur</h2>
+    <p class="text-secondary mb-0">Voici un aperçu général de l'établissement.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card card-stat h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="icon-badge"><i class="bi bi-people-fill"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">@ViewBag.NombreEtudiants</div>
+                    <div class="text-secondary">Étudiants</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card card-stat h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="icon-badge"><i class="bi bi-building"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">@ViewBag.NombreClasses</div>
+                    <div class="text-secondary">Classes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card card-stat h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="icon-badge"><i class="bi bi-journal-bookmark-fill"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">@ViewBag.NombreMatieres</div>
+                    <div class="text-secondary">Matières</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card card-stat h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="icon-badge"><i class="bi bi-clipboard-check-fill"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">@ViewBag.NombreNotes</div>
+                    <div class="text-secondary">Notes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-info-circle text-primary"></i> Prochaines étapes</h5>
+        <p class="card-text text-secondary mb-0">
+            Les modules Étudiants, Classes, Matières et Notes seront construits aux étapes suivantes.
+            Les chiffres ci-dessus se mettront à jour automatiquement une fois ces modules branchés à la base de données.
+        </p>
+    </div>
+</div>
