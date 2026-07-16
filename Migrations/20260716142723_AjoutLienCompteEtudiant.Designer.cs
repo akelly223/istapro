@@ -3,6 +3,7 @@ using System;
 using GestionScolaire.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,34 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionScolaire.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260716142723_AjoutLienCompteEtudiant")]
+    partial class AjoutLienCompteEtudiant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
-
-            modelBuilder.Entity("GestionScolaire.Models.Attendance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("DateSeance")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("EstPresent")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("Attendances");
-                });
 
             modelBuilder.Entity("GestionScolaire.Models.ClassRoom", b =>
                 {
@@ -85,74 +66,6 @@ namespace GestionScolaire.Migrations
                     b.HasIndex("SubjectId");
 
                     b.ToTable("Grades");
-                });
-
-            modelBuilder.Entity("GestionScolaire.Models.Homework", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ClassRoomId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("DateCreation")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateLimite")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Titre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassRoomId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.ToTable("Homeworks");
-                });
-
-            modelBuilder.Entity("GestionScolaire.Models.HomeworkSubmission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("DateEnvoi")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("HomeworkId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("NomFichier")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NomFichierOriginal")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HomeworkId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("HomeworkSubmissions");
                 });
 
             modelBuilder.Entity("GestionScolaire.Models.Student", b =>
@@ -402,17 +315,6 @@ namespace GestionScolaire.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("GestionScolaire.Models.Attendance", b =>
-                {
-                    b.HasOne("GestionScolaire.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("GestionScolaire.Models.Grade", b =>
                 {
                     b.HasOne("GestionScolaire.Models.Student", "Student")
@@ -430,44 +332,6 @@ namespace GestionScolaire.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("GestionScolaire.Models.Homework", b =>
-                {
-                    b.HasOne("GestionScolaire.Models.ClassRoom", "ClassRoom")
-                        .WithMany()
-                        .HasForeignKey("ClassRoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GestionScolaire.Models.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ClassRoom");
-
-                    b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("GestionScolaire.Models.HomeworkSubmission", b =>
-                {
-                    b.HasOne("GestionScolaire.Models.Homework", "Homework")
-                        .WithMany("Soumissions")
-                        .HasForeignKey("HomeworkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GestionScolaire.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Homework");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("GestionScolaire.Models.Student", b =>
@@ -535,11 +399,6 @@ namespace GestionScolaire.Migrations
             modelBuilder.Entity("GestionScolaire.Models.ClassRoom", b =>
                 {
                     b.Navigation("Students");
-                });
-
-            modelBuilder.Entity("GestionScolaire.Models.Homework", b =>
-                {
-                    b.Navigation("Soumissions");
                 });
 #pragma warning restore 612, 618
         }

@@ -34,5 +34,9 @@ namespace GestionScolaire.Models
 
         // Propriété de navigation vers la classe de l'étudiant
         public ClassRoom? ClassRoom { get; set; }
+
+        // Identifiant du compte Identity (AspNetUsers.Id) créé automatiquement pour cet étudiant,
+        // afin qu'il puisse se connecter à son propre espace. Null tant que le compte n'est pas créé.
+        public string? UserId { get; set; }
     }
 }
