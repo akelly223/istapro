@@ -1,0 +1,68 @@
+@model IEnumerable<Subject>
+@{
+    ViewData["Title"] = "Matières";
+}
+
+<div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Matières</h2>
+        <p class="text-secondary mb-0">Liste des matières enseignées.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-journal-plus"></i> Ajouter une matière
+    </a>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i> @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-modern align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-3">Nom</th>
+                        <th>Coefficient</th>
+                        <th class="text-end pe-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-secondary py-4">
+                                Aucune matière enregistrée pour le moment.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var matiere in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-semibold">@matiere.Nom</td>
+                                <td>
+                                    <span class="badge rounded-pill text-bg-light border">@matiere.Coefficient</span>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <a asp-action="Edit" asp-route-id="@matiere.Id" class="btn btn-sm btn-outline-secondary" title="Modifier">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@matiere.Id" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
