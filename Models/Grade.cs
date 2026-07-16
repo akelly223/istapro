@@ -1,18 +1,29 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace GestionScolaire.Models
 {
-    // Version minimale : Cécile complètera ce modèle à l'étape 6 (Gestion des notes)
-    // en ajoutant DateEvaluation et les validations (note entre 0 et 20).
     public class Grade
     {
         public int Id { get; set; }
 
-        // Clé étrangère vers l'étudiant qui reçoit la note
+        [Required(ErrorMessage = "L'étudiant est obligatoire.")]
+        [Display(Name = "Étudiant")]
         public int StudentId { get; set; }
 
-        // Clé étrangère vers la matière concernée par la note
+        [Required(ErrorMessage = "La matière est obligatoire.")]
+        [Display(Name = "Matière")]
         public int SubjectId { get; set; }
 
+        [Required(ErrorMessage = "La note est obligatoire.")]
+        [Range(0, 20, ErrorMessage = "La note doit être comprise entre 0 et 20.")]
+        [Display(Name = "Note")]
         public double Valeur { get; set; }
+
+        [Required(ErrorMessage = "La date d'évaluation est obligatoire.")]
+        [DataType(DataType.Date)]
+        [Display(Name = "Date d'évaluation")]
+        public DateTime DateEvaluation { get; set; }
 
         // Propriétés de navigation
         public Student? Student { get; set; }
