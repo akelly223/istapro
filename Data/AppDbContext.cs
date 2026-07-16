@@ -19,5 +19,8 @@ namespace GestionScolaire.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Grade> Grades { get; set; }
+        public DbSet<Homework> Homeworks { get; set; }
+        public DbSet<HomeworkSubmission> HomeworkSubmissions { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
     }
 }
