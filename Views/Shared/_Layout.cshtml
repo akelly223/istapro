@@ -16,10 +16,15 @@
 </head>
 <body>
 @{
-    // Cette variable nous dit si l'administrateur est connecté ou non.
+    // Cette variable nous dit si un utilisateur est connecté ou non (quel que soit son rôle).
     // Elle décide si on affiche la sidebar complète et le menu utilisateur,
     // ou juste un bouton "Se connecter".
     bool estConnecte = User.Identity?.IsAuthenticated ?? false;
+
+    string libelleRole = User.IsInRole(AppRoles.Administrateur) ? "Administrateur"
+        : User.IsInRole(AppRoles.Professeur) ? "Professeur"
+        : User.IsInRole(AppRoles.Etudiant) ? "Étudiant"
+        : "Compte";
 }
 
     <div class="d-flex">
@@ -32,29 +37,7 @@
                     <i class="bi bi-mortarboard-fill"></i>
                     <span>Gestion Scolaire</span>
                 </div>
-                <nav class="nav flex-column mt-3">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Dashboard">
-                        <i class="bi bi-speedometer2"></i> Tableau de bord
-                    </a>
-                    <a class="nav-link" asp-area="" asp-controller="Students" asp-action="Index">
-                        <i class="bi bi-people-fill"></i> Étudiants
-                    </a>
-                    <a class="nav-link" asp-area="" asp-controller="ClassRooms" asp-action="Index">
-                        <i class="bi bi-building"></i> Classes
-                    </a>
-                    <a class="nav-link" asp-area="" asp-controller="Subjects" asp-action="Index">
-                        <i class="bi bi-journal-bookmark-fill"></i> Matières
-                    </a>
-                    <a class="nav-link" asp-area="" asp-controller="Grades" asp-action="Index">
-                        <i class="bi bi-clipboard-check-fill"></i> Notes
-                    </a>
-                    <hr class="text-secondary mx-3" />
-                    <form asp-controller="Account" asp-action="Logout" method="post">
-                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">
-                            <i class="bi bi-box-arrow-right"></i> Se déconnecter
-                        </button>
-                    </form>
-                </nav>
+                <partial name="_SidebarNav" />
             </aside>
 
             <!-- ================= SIDEBAR (mobile - offcanvas) ================= -->
@@ -64,29 +47,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
                 </div>
                 <div class="offcanvas-body p-0">
-                    <nav class="nav flex-column mt-3">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Dashboard">
-                            <i class="bi bi-speedometer2"></i> Tableau de bord
-                        </a>
-                        <a class="nav-link" asp-area="" asp-controller="Students" asp-action="Index">
-                            <i class="bi bi-people-fill"></i> Étudiants
-                        </a>
-                        <a class="nav-link" asp-area="" asp-controller="ClassRooms" asp-action="Index">
-                            <i class="bi bi-building"></i> Classes
-                        </a>
-                        <a class="nav-link" asp-area="" asp-controller="Subjects" asp-action="Index">
-                            <i class="bi bi-journal-bookmark-fill"></i> Matières
-                        </a>
-                        <a class="nav-link" asp-area="" asp-controller="Grades" asp-action="Index">
-                            <i class="bi bi-clipboard-check-fill"></i> Notes
-                        </a>
-                        <hr class="text-secondary mx-3" />
-                        <form asp-controller="Account" asp-action="Logout" method="post">
-                            <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">
-                                <i class="bi bi-box-arrow-right"></i> Se déconnecter
-                            </button>
-                        </form>
-                    </nav>
+                    <partial name="_SidebarNav" />
                 </div>
             </div>
         }
@@ -111,7 +72,7 @@
                     <div class="dropdown">
                         <button class="btn btn-light d-flex align-items-center gap-2 border" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle fs-5"></i>
-                            <span class="d-none d-sm-inline">Administrateur</span>
+                            <span class="d-none d-sm-inline">@libelleRole</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
