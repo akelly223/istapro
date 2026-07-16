@@ -13,46 +13,70 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Mise en place d'ASP.NET Identity pour gérer le compte administrateur (connexion, mot de passe, cookie).
-// Règles de mot de passe simplifiées car il n'y a qu'un seul compte administrateur pour ce projet.
+// Mise en place d'ASP.NET Identity pour gérer les comptes (Administrateur, Professeur, Etudiant).
+// Règles de mot de passe simplifiées : les comptes étudiants ont pour mot de passe
+// leur date de naissance (8 chiffres), donc pas besoin de majuscule/symbole obligatoire.
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
     options.Password.RequiredLength = 6;
 })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-// On indique à Identity où se trouve notre page de connexion, puisqu'on utilise
-// notre propre AccountController et non les pages Identity par défaut.
+// On indique à Identity où se trouvent nos pages de connexion et d'accès refusé, puisqu'on
+// utilise notre propre AccountController et non les pages Identity par défaut.
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
-    options.AccessDeniedPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
 var app = builder.Build();
 
-// Création automatique du compte administrateur au premier démarrage, s'il n'existe pas déjà.
-// C'est le seul compte de l'application : il n'y a pas de page d'inscription.
+// Création automatique des rôles et des comptes de démonstration au premier démarrage.
+// Il y a 3 rôles : Administrateur (gère tout), Professeur (notes, devoirs, présences)
+// et Etudiant (un compte par étudiant, créé automatiquement par StudentsController).
 using (var scope = app.Services.CreateScope())
 {
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    foreach (var role in new[] { AppRoles.Administrateur, AppRoles.Professeur, AppRoles.Etudiant })
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
 
     const string adminEmail = "admin@ecole.com";
     const string adminPassword = "Admin123";
-
-    if (await userManager.FindByEmailAsync(adminEmail) is null)
+    var admin = await userManager.FindByEmailAsync(adminEmail);
+    if (admin is null)
     {
-        var admin = new IdentityUser
-        {
-            UserName = adminEmail,
-            Email = adminEmail,
-            EmailConfirmed = true
-        };
+        admin = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
         await userManager.CreateAsync(admin, adminPassword);
+    }
+    if (!await userManager.IsInRoleAsync(admin, AppRoles.Administrateur))
+    {
+        await userManager.AddToRoleAsync(admin, AppRoles.Administrateur);
+    }
+
+    const string profEmail = "prof@ecole.com";
+    const string profPassword = "Prof123";
+    var professeur = await userManager.FindByEmailAsync(profEmail);
+    if (professeur is null)
+    {
+        professeur = new IdentityUser { UserName = profEmail, Email = profEmail, EmailConfirmed = true };
+        await userManager.CreateAsync(professeur, profPassword);
+    }
+    if (!await userManager.IsInRoleAsync(professeur, AppRoles.Professeur))
+    {
+        await userManager.AddToRoleAsync(professeur, AppRoles.Professeur);
     }
 }
 
