@@ -1,0 +1,46 @@
+@model Homework
+@{
+    ViewData["Title"] = "Envoyer mon devoir";
+    var soumissionExistante = ViewBag.SoumissionExistante as HomeworkSubmission;
+}
+
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a asp-action="MesDevoirs" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i></a>
+    <h2 class="fw-bold mb-0">Envoyer mon devoir</h2>
+</div>
+
+<div class="card" style="max-width: 640px;">
+    <div class="card-body p-4">
+        <h5 class="fw-bold">@Model.Titre</h5>
+        <p class="text-secondary">@Model.Subject?.Nom &middot; à rendre pour le @Model.DateLimite.ToString("dd/MM/yyyy")</p>
+        @if (!string.IsNullOrEmpty(Model.Description))
+        {
+            <p>@Model.Description</p>
+        }
+
+        @if (soumissionExistante != null)
+        {
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                Tu as déjà envoyé <strong>@soumissionExistante.NomFichierOriginal</strong> le @soumissionExistante.DateEnvoi.ToString("dd/MM/yyyy HH:mm").
+                Envoyer un nouveau fichier remplacera ce rendu.
+            </div>
+        }
+
+        <div asp-validation-summary="ModelOnly" class="mb-3"></div>
+
+        <form asp-action="Soumettre" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Fichier à envoyer</label>
+                <input type="file" name="fichier" class="form-control" required />
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-upload"></i> Envoyer
+                </button>
+                <a asp-action="MesDevoirs" class="btn btn-light border">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>

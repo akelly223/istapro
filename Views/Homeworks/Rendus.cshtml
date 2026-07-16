@@ -1,0 +1,65 @@
+@model Homework
+@{
+    ViewData["Title"] = "Rendus du devoir";
+    var etudiantsSansRendu = ViewBag.EtudiantsSansRendu as List<Student> ?? new List<Student>();
+}
+
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i></a>
+    <div>
+        <h2 class="fw-bold mb-0">@Model.Titre</h2>
+        <p class="text-secondary mb-0">@Model.Subject?.Nom &middot; @Model.ClassRoom?.Nom &middot; à rendre pour le @Model.DateLimite.ToString("dd/MM/yyyy")</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-check-circle text-success"></i> Rendus reçus (@(Model.Soumissions?.Count ?? 0))</h5>
+                @if (Model.Soumissions == null || !Model.Soumissions.Any())
+                {
+                    <p class="text-secondary mb-0">Aucun rendu reçu pour le moment.</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var rendu in Model.Soumissions.OrderBy(s => s.Student!.Nom))
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <div class="fw-semibold">@rendu.Student?.Nom @rendu.Student?.Prenom</div>
+                                    <div class="text-secondary small">Envoyé le @rendu.DateEnvoi.ToString("dd/MM/yyyy HH:mm")</div>
+                                </div>
+                                <a asp-action="Telecharger" asp-route-id="@rendu.Id" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-download"></i> Télécharger
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-exclamation-circle text-danger"></i> En attente (@etudiantsSansRendu.Count)</h5>
+                @if (!etudiantsSansRendu.Any())
+                {
+                    <p class="text-secondary mb-0">Tous les étudiants de la classe ont rendu ce devoir.</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var etudiant in etudiantsSansRendu)
+                        {
+                            <li class="list-group-item px-0">@etudiant.Nom @etudiant.Prenom</li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>

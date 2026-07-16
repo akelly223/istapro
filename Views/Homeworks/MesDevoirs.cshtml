@@ -1,0 +1,78 @@
+@model IEnumerable<Homework>
+@{
+    ViewData["Title"] = "Mes devoirs";
+    var mesSoumissions = ViewBag.MesSoumissions as Dictionary<int, HomeworkSubmission> ?? new Dictionary<int, HomeworkSubmission>();
+}
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1">Mes devoirs</h2>
+    <p class="text-secondary mb-0">Devoirs assignés à ta classe.</p>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i> @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-modern align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-3">Titre</th>
+                        <th>Matière</th>
+                        <th>Date limite</th>
+                        <th>Statut</th>
+                        <th class="text-end pe-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-secondary py-4">
+                                Aucun devoir assigné pour le moment.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var devoir in Model)
+                        {
+                            bool aRendu = mesSoumissions.ContainsKey(devoir.Id);
+                            bool enRetard = !aRendu && devoir.DateLimite.Date < DateTime.Today;
+                            <tr>
+                                <td class="ps-3 fw-semibold">@devoir.Titre</td>
+                                <td>@devoir.Subject?.Nom</td>
+                                <td>@devoir.DateLimite.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (aRendu)
+                                    {
+                                        <span class="badge rounded-pill text-bg-success"><i class="bi bi-check-lg"></i> Envoyé</span>
+                                    }
+                                    else if (enRetard)
+                                    {
+                                        <span class="badge rounded-pill text-bg-danger">En retard</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill text-bg-secondary">À faire</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-3">
+                                    <a asp-action="Soumettre" asp-route-id="@devoir.Id" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-upload"></i> @(aRendu ? "Remplacer mon rendu" : "Envoyer mon devoir")
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

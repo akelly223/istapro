@@ -1,0 +1,62 @@
+@model Homework
+@{
+    ViewData["Title"] = "Assigner un devoir";
+}
+
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i></a>
+    <h2 class="fw-bold mb-0">Assigner un devoir</h2>
+</div>
+
+<div class="card" style="max-width: 640px;">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Titre" class="form-label"></label>
+                <input asp-for="Titre" class="form-control" placeholder="Exercices chapitre 3" />
+                <span asp-validation-for="Titre" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Consignes pour les étudiants..."></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="SubjectId" class="form-label"></label>
+                    <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.Matieres">
+                        <option value="">-- Choisir une matière --</option>
+                    </select>
+                    <span asp-validation-for="SubjectId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ClassRoomId" class="form-label"></label>
+                    <select asp-for="ClassRoomId" class="form-select" asp-items="ViewBag.Classes">
+                        <option value="">-- Choisir une classe --</option>
+                    </select>
+                    <span asp-validation-for="ClassRoomId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="DateLimite" class="form-label"></label>
+                    <input asp-for="DateLimite" class="form-control" />
+                    <span asp-validation-for="DateLimite" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i> Assigner
+                </button>
+                <a asp-action="Index" class="btn btn-light border">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
