@@ -1,0 +1,12 @@
+## Dossiers de build .NET
+bin/
+obj/
+
+## Fichiers Visual Studio
+.vs/
+*.user
+
+## Base de données locale (chacun génère la sienne avec les migrations EF)
+*.db
+*.db-shm
+*.db-wal
