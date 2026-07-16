@@ -10,3 +10,6 @@ obj/
 *.db
 *.db-shm
 *.db-wal
+
+## Fichiers envoyés par les étudiants (devoirs) : ne doivent pas être partagés sur GitHub
+wwwroot/uploads/
