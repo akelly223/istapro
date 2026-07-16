@@ -1,5 +1,7 @@
+using System.Globalization;
 using GestionScolaire.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,6 +63,17 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// Force le format "16.5" (point) pour les nombres décimaux dans toute l'application,
+// quelle que soit la langue configurée sur la machine (certains PC en français utilisent
+// la virgule par défaut, ce qui ferait échouer la conversion des notes/coefficients).
+var culture = new CultureInfo("en-US");
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(culture),
+    SupportedCultures = new[] { culture },
+    SupportedUICultures = new[] { culture }
+});
 
 app.UseHttpsRedirection();
 app.UseRouting();
