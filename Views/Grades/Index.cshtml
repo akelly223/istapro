@@ -1,0 +1,97 @@
+@model IEnumerable<Grade>
+@{
+    ViewData["Title"] = "Notes";
+    int? studentIdFiltre = ViewBag.StudentIdFiltre as int?;
+    double? moyenne = ViewBag.Moyenne as double?;
+}
+
+<div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Notes</h2>
+        <p class="text-secondary mb-0">Liste des notes, ou notes d'un seul étudiant.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Attribuer une note
+    </a>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i> @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+}
+
+<div class="card mb-4">
+    <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3">
+        <form method="get" asp-action="Index" class="d-flex align-items-center gap-2 flex-grow-1">
+            <label class="form-label mb-0 text-nowrap"><i class="bi bi-funnel"></i> Consulter les notes de :</label>
+            <select name="studentId" class="form-select" style="max-width: 320px;" asp-items="ViewBag.Etudiants" onchange="this.form.submit()">
+                <option value="">-- Tous les étudiants --</option>
+            </select>
+        </form>
+
+        @if (moyenne.HasValue)
+        {
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-secondary">Moyenne pondérée :</span>
+                <span class="badge rounded-pill @(moyenne >= 10 ? "text-bg-success" : "text-bg-danger") fs-6">
+                    @moyenne.Value.ToString("0.00") / 20
+                </span>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-modern align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-3">Étudiant</th>
+                        <th>Matière</th>
+                        <th>Note</th>
+                        <th>Date d'évaluation</th>
+                        <th class="text-end pe-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-secondary py-4">
+                                @(studentIdFiltre.HasValue ? "Aucune note pour cet étudiant pour le moment." : "Aucune note enregistrée pour le moment.")
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var note in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-semibold">@note.Student?.Nom @note.Student?.Prenom</td>
+                                <td>@note.Subject?.Nom</td>
+                                <td>
+                                    <span class="badge rounded-pill @(note.Valeur >= 10 ? "text-bg-success" : "text-bg-danger")">
+                                        @note.Valeur.ToString("0.##") / 20
+                                    </span>
+                                </td>
+                                <td>@note.DateEvaluation.ToString("dd/MM/yyyy")</td>
+                                <td class="text-end pe-3">
+                                    <a asp-action="Edit" asp-route-id="@note.Id" class="btn btn-sm btn-outline-secondary" title="Modifier">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@note.Id" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
