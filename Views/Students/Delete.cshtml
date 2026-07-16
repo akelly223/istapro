@@ -1,0 +1,41 @@
+@model Student
+@{
+    ViewData["Title"] = "Supprimer un étudiant";
+}
+
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i></a>
+    <h2 class="fw-bold mb-0">Supprimer un étudiant</h2>
+</div>
+
+<div class="card" style="max-width: 640px;">
+    <div class="card-body p-4">
+        <div class="alert alert-danger d-flex align-items-start gap-2">
+            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            <div>Cette action est définitive. Confirmez-vous la suppression de cet étudiant ?</div>
+        </div>
+
+        <dl class="row mb-4">
+            <dt class="col-sm-4 text-secondary">Nom complet</dt>
+            <dd class="col-sm-8">@Model.Nom @Model.Prenom</dd>
+
+            <dt class="col-sm-4 text-secondary">Email</dt>
+            <dd class="col-sm-8">@Model.Email</dd>
+
+            <dt class="col-sm-4 text-secondary">Date de naissance</dt>
+            <dd class="col-sm-8">@Model.DateNaissance.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-4 text-secondary">Classe</dt>
+            <dd class="col-sm-8">@(Model.ClassRoom?.Nom ?? "—")</dd>
+        </dl>
+
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash3"></i> Confirmer la suppression
+                </button>
+                <a asp-action="Index" class="btn btn-light border">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
